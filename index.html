@@ -282,6 +282,13 @@
             100% { transform: rotate(405deg) translateX(145px) rotate(-405deg); }
         }
 
+        /* ===== TEXT GROUP ===== */
+        .text-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         /* ===== WORDMARK ===== */
         .wordmark {
             font-family: 'Playfair Display', Georgia, serif;
@@ -308,8 +315,6 @@
             line-height: 2;
             color: var(--text-muted);
             text-align: left;
-            max-width: 480px;
-            width: 100%;
             margin-bottom: 2.5rem;
             opacity: 0;
             animation: fadeIn 0.6s ease 1.2s forwards;
@@ -529,11 +534,11 @@
             </svg>
         </div>
 
-        <h1 class="wordmark">deepquest<span class="dot-io">.io</span></h1>
-
-        <div class="terminal" id="terminal"></div>
-
-        <p class="tagline" id="tagline">We're building something. Stay curious.</p>
+        <div class="text-group">
+            <h1 class="wordmark">deepquest<span class="dot-io">.io</span></h1>
+            <div class="terminal" id="terminal"></div>
+            <p class="tagline" id="tagline">We're building something. Stay curious.</p>
+        </div>
     </div>
 
     <script>

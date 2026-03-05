@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8" stop-opacity="1" />
+      <stop offset="100%" stop-color="#64748b" stop-opacity="1" />
+    </linearGradient>
+  </defs>
+  <!-- Bold ring -->
+  <circle cx="16" cy="16" r="11" fill="none" stroke="url(#rg)" stroke-width="4" />
+  <!-- Pulsing core -->
+  <circle cx="16" cy="16" r="5" fill="url(#rg)" opacity="0.3">
+    <animate attributeName="r" values="4;6.5;4" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <!-- Orbiting dot -->
+  <circle cx="16" cy="4" r="2.5" fill="#94a3b8">
+    <animateTransform attributeName="transform" type="rotate" from="0 16 16" to="360 16 16" dur="12s" repeatCount="indefinite" />
+  </circle>
+</svg>

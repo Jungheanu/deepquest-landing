@@ -8,86 +8,119 @@
   <!-- Coming-soon holding page: keep it out of the index until sign-in opens. -->
   <meta name="robots" content="noindex" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* Colours mirror the app's --landing-* tokens so this page matches localhost/login exactly. */
+    /* Every value below is copied verbatim from the app so this page renders
+       identically to localhost/login. Tokens mirror the app's globals.css. */
+    :root {
+      --landing-bg: #0f1114;
+      --landing-accent-light: #94a3b8;
+      --landing-success: #4a6b5d;
+      --landing-text-primary: #d5d8db;
+      --landing-text-secondary: #8b9298;
+      --landing-text-muted: #636e72;
+      --landing-border: rgba(100, 116, 139, 0.15);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-jetbrains: 'JetBrains Mono';
+      --font-playfair: 'Playfair Display';
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0f1114; color: #d5d8db; font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; display: flex; overflow: hidden; }
+    body { background: var(--landing-bg); color: var(--landing-text-primary); font-family: var(--font-sans); min-height: 100vh; display: flex; overflow: hidden; -webkit-font-smoothing: antialiased; }
 
+    /* Brand chrome (matches (auth)/layout.tsx exactly) */
     .logo { position: fixed; top: 26px; left: 32px; z-index: 30; display: inline-flex; align-items: center; gap: 11px; text-decoration: none; }
-    .wordmark { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 500; color: #d5d8db; }
-    .io { color: #94a3b8; }
+    .wordmark { font-family: var(--font-playfair), serif; font-size: 1.125rem; font-weight: 500; letter-spacing: -0.025em; color: var(--landing-text-primary); }
+    .io { color: var(--landing-accent-light); }
+    .seeker-node { transform-box: view-box; transform-origin: 32px 32px; animation: seeker-orbit 10s linear infinite; }
+    @keyframes seeker-orbit { to { transform: rotate(360deg); } }
 
-    /* Left — living atmosphere. Boot log is CENTRED in the panel (like AuthAtmosphere). */
-    .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: center; padding: 4.5rem 2rem; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 32% 22%, rgba(148,163,184,.06), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1) 0%, #0f1114 100%); }
-    /* faint scanlines + vignette echo the app's atmosphere texture */
+    /* Left — living atmosphere. Boot log CENTRED in the panel (AuthAtmosphere). */
+    .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: center; padding: 4.5rem 2rem; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 32% 22%, rgba(148,163,184,.06), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1) 0%, var(--landing-bg) 100%); }
     .left::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(100,116,139,.014) 2px, rgba(100,116,139,.014) 4px); }
     .left::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,.5) 100%); }
     .atmos-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-    .copyr { position: absolute; bottom: 24px; left: 34px; z-index: 4; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #636e72; }
+    .copyr { position: absolute; bottom: 24px; left: 34px; z-index: 4; font-family: var(--font-jetbrains), monospace; font-size: 0.75rem; color: var(--landing-text-muted); }
 
-    .term { position: relative; z-index: 4; font-family: 'JetBrains Mono', monospace; font-size: clamp(.74rem, 1vw, .82rem); font-weight: 300; line-height: 1.9; color: #636e72; text-align: left; width: 23rem; max-width: 100%; opacity: 0; animation: aa-fade .6s ease .5s forwards; }
+    .term { position: relative; z-index: 4; font-family: var(--font-jetbrains), monospace; font-size: clamp(.74rem, 1vw, .82rem); font-weight: 300; line-height: 1.9; color: var(--landing-text-muted); text-align: left; width: 23rem; max-width: 100%; opacity: 0; animation: aa-fade .6s ease .5s forwards; }
     .tline { display: flex; align-items: center; min-height: 1.9em; }
     .tc { white-space: pre; }
     .dots { flex: 1; margin: 0 .7em; border-bottom: 1px dotted rgba(100,116,139,.32); transform: translateY(-.28em); }
-    .ok { color: #4a6b5d; font-weight: 500; white-space: nowrap; text-shadow: 0 0 8px rgba(74,107,93,.5); }
+    .ok { color: var(--landing-success); font-weight: 500; white-space: nowrap; text-shadow: 0 0 8px rgba(74,107,93,.5); }
     .ok.flash { animation: aa-okflash .5s ease-out; }
-    .tline.status { margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(100,116,139,.15); }
-    /* whole "> STATUS: ONLINE" line pulses in the accent colour, exactly like the app */
-    .sval-line { color: #94a3b8; font-weight: 500; letter-spacing: .02em; animation: aa-statuspulse 3s ease-in-out infinite; }
-    .t-cursor { display: inline-block; width: .5em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: #94a3b8; animation: aa-blink 1s step-end infinite; }
-
+    .tline.status { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--landing-border); }
+    .sval-line { color: var(--landing-accent-light); font-weight: 500; letter-spacing: .02em; animation: aa-statuspulse 3s ease-in-out infinite; }
+    .t-cursor { display: inline-block; width: .5em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: var(--landing-accent-light); animation: aa-blink 1s step-end infinite; }
     @keyframes aa-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
     @keyframes aa-okflash { 0% { text-shadow: 0 0 16px rgba(74,107,93,.5); } 100% { text-shadow: 0 0 8px rgba(74,107,93,.5); } }
     @keyframes aa-statuspulse { 0%, 100% { opacity: .7; text-shadow: 0 0 8px rgba(148,163,184,.12); } 50% { opacity: 1; text-shadow: 0 0 16px rgba(148,163,184,.12); } }
     @keyframes aa-fade { to { opacity: 1; } }
 
-    /* Right — sign-in form panel, matching the app's (auth)/layout gradient + border. */
-    .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid rgba(100,116,139,.15); background: linear-gradient(180deg, rgba(18,20,25,1) 0%, #0f1114 100%); }
+    /* Right — sign-in form panel (matches (auth)/layout.tsx) */
+    .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid var(--landing-border); background: linear-gradient(180deg, rgba(18,20,25,1) 0%, var(--landing-bg) 100%); }
     .rinner { width: 100%; max-width: 360px; position: relative; }
-    h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #eef1f4; text-align: center; }
-    .sub { font-size: 13px; color: #8b9298; text-align: center; margin: 8px 0 40px; }
-    .oauth { display: flex; gap: 10px; margin-bottom: 18px; }
-    .obtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 1px solid rgba(100,116,139,.2); border-radius: 9px; background: rgba(255,255,255,.02); color: #d5d8db; font-size: 13px; font-weight: 500; font-family: inherit; }
-    .divider { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: .06em; color: #636e72; }
-    .divider span { flex: 1; height: 1px; background: rgba(100,116,139,.14); }
-    label { display: block; font-size: 12px; font-weight: 500; color: #8b9298; margin-bottom: 7px; }
-    .prow { display: flex; justify-content: space-between; align-items: center; }
-    .forgot { font-size: 11px; color: #94a3b8; text-decoration: none; font-weight: 500; }
-    .inp { position: relative; margin-bottom: 15px; }
-    .inp input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,.03); border: 1px solid rgba(100,116,139,.2); border-radius: 9px; color: #d5d8db; font-family: inherit; font-size: 13px; outline: none; }
-    .inp input::placeholder { color: #636e72; }
-    .eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); opacity: .4; font-size: 13px; }
-    .signin { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid rgba(148,163,184,.15); border-radius: 9px; background: linear-gradient(135deg, rgba(100,116,139,.9), rgba(74,85,104,.9)); color: #fff; font-size: 13px; font-weight: 600; font-family: inherit; }
-    .switch { margin-top: 20px; font-size: 12.5px; color: #636e72; text-align: center; }
-    .switch a { color: #94a3b8; text-decoration: none; font-weight: 500; }
+    .mobile-logo { display: none; }
+
+    /* Form — values copied verbatim from (auth)/login/page.tsx */
+    .f-head { text-align: center; margin-bottom: 40px; }
+    .f-h1 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.025em; color: var(--landing-text-primary); }
+    .f-sub { margin-top: 8px; font-size: 0.875rem; color: var(--landing-text-secondary); }
+    .f-oauth { display: flex; gap: 10px; margin-bottom: 20px; }
+    .f-obtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(100,116,139,0.18); border-radius: 8px; color: var(--landing-text-primary); font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
+    .f-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .f-divider .rule { flex: 1; height: 1px; background: rgba(100,116,139,0.12); }
+    .f-divider .txt { font-family: var(--font-mono); font-size: 10px; color: var(--landing-text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .f-form { display: flex; flex-direction: column; gap: 16px; }
+    .f-label { display: block; font-size: 12px; font-weight: 500; color: var(--landing-text-secondary); margin-bottom: 6px; }
+    .f-prow { display: flex; align-items: center; justify-content: space-between; }
+    .f-forgot { font-size: 11px; color: var(--landing-accent-light); text-decoration: none; font-weight: 500; margin-bottom: 6px; }
+    .f-input { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(100,116,139,0.18); border-radius: 8px; font-family: var(--font-sans); font-size: 13px; color: var(--landing-text-primary); outline: none; }
+    .f-input::placeholder { color: var(--landing-text-muted); }
+    .f-input.pw { padding: 10px 40px 10px 14px; }
+    .f-pwrap { position: relative; }
+    .f-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; color: rgba(100,116,139,0.6); display: flex; align-items: center; justify-content: center; }
+    .f-signin { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px 20px; margin-top: 4px; background: linear-gradient(135deg, rgba(100,116,139,0.9) 0%, rgba(74,85,104,0.9) 100%); border: 1px solid rgba(148,163,184,0.15); border-radius: 8px; color: #fff; font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
+    .f-switch { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; font-size: 12px; color: var(--landing-text-muted); }
+    .f-switch a { color: var(--landing-accent-light); font-size: 12px; font-weight: 500; text-decoration: none; }
+    .f-footer { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(100,116,139,0.08); text-align: center; }
+    .f-footer span { font-size: 10px; color: rgba(99,110,114,0.5); letter-spacing: 0.02em; }
+    .f-footer a { color: inherit; text-decoration: underline; }
 
     /* Coming-soon gate: dim + blur the form, float a lock pill over it. */
-    .pilllock { display: inline-flex; align-items: center; gap: 8px; padding: 8px 17px; border-radius: 999px; border: 1px solid rgba(148,163,184,.28); background: rgba(148,163,184,.09); color: #eef1f4; font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
-    .pilllock svg { width: 13px; height: 13px; color: #94a3b8; }
-    .vf .fw { filter: blur(1.5px) saturate(.55); opacity: .26; pointer-events: none; }
-    .vf .ov { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
+    .f-dim { filter: blur(2px) saturate(0.55); opacity: 0.28; pointer-events: none; user-select: none; }
+    .f-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .f-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 17px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.28); background: rgba(148,163,184,0.09); color: var(--landing-text-primary); font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 
-    @media (max-width: 860px) {
-      body { overflow: auto; }
+    @media (max-width: 1023px) {
       .left { display: none; }
       .right { border-left: none; width: 100%; }
+      .mobile-logo { display: block; text-align: center; margin-bottom: 32px; }
+      .mobile-logo a { font-family: var(--font-playfair), serif; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.025em; color: var(--landing-text-primary); text-decoration: none; }
     }
-    /* Reduced motion — static "ready" state, no canvas, no cursor. */
+    @media (max-width: 860px) { body { overflow: auto; } }
+    /* Reduced motion — static "ready" state, no canvas, no cursor, no orbit. */
     @media (prefers-reduced-motion: reduce) {
       .atmos-canvas { display: none; }
       .term { opacity: 1; animation: none; }
-      .sval-line, .ok.flash { animation: none; }
+      .sval-line, .ok.flash, .seeker-node { animation: none; }
       .t-cursor { display: none; }
     }
   </style>
 </head>
 <body>
   <a class="logo" href="/">
-    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
-      <circle cx="32" cy="32" r="23" stroke="#94a3b8" stroke-width="2" />
-      <circle cx="48.26" cy="15.74" r="6" fill="#cbd5e1" opacity=".5" />
-      <circle cx="48.26" cy="15.74" r="2.7" fill="#f8fafc" />
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="32" cy="32" r="23" stroke="var(--landing-accent-light)" stroke-width="2" />
+      <g class="seeker-node">
+        <circle cx="48.26" cy="15.74" r="6" fill="url(#authSeekerGlow)" />
+        <circle cx="48.26" cy="15.74" r="2.7" fill="#f8fafc" />
+      </g>
+      <defs>
+        <radialGradient id="authSeekerGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#e2e8f0" stop-opacity="0.85" />
+          <stop offset="1" stop-color="#cbd5e1" stop-opacity="0" />
+        </radialGradient>
+      </defs>
     </svg>
     <span class="wordmark">deepquest<span class="io">.io</span></span>
   </a>
@@ -99,31 +132,71 @@
   </div>
 
   <div class="right">
-    <div class="rinner vf">
-      <div class="fw">
-        <h1>Welcome back</h1>
-        <p class="sub">Sign in to continue to your research workspace</p>
-        <div class="oauth">
-          <button class="obtn" disabled>
-            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg> Google
-          </button>
-          <button class="obtn" disabled>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="#d5d8db"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.64 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z" /></svg> GitHub
-          </button>
+    <div class="rinner">
+      <div class="mobile-logo"><a href="/">deepquest.io</a></div>
+
+      <div style="position: relative;">
+        <div class="f-dim" inert>
+          <div class="f-head">
+            <h1 class="f-h1">Welcome back</h1>
+            <p class="f-sub">Sign in to continue to your research workspace</p>
+          </div>
+
+          <div class="f-oauth">
+            <button class="f-obtn" type="button" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
+              <span>Google</span>
+            </button>
+            <button class="f-obtn" type="button" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+              <span>GitHub</span>
+            </button>
+          </div>
+
+          <div class="f-divider">
+            <div class="rule"></div>
+            <span class="txt">or continue with email</span>
+            <div class="rule"></div>
+          </div>
+
+          <form class="f-form">
+            <div>
+              <label class="f-label">Email address</label>
+              <input class="f-input" type="email" placeholder="you@company.com" disabled />
+            </div>
+
+            <div>
+              <div class="f-prow">
+                <label class="f-label">Password</label>
+                <a class="f-forgot" href="/forgot-password">Forgot?</a>
+              </div>
+              <div class="f-pwrap">
+                <input class="f-input pw" type="password" placeholder="Enter your password" disabled />
+                <button class="f-eye" type="button" tabindex="-1" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <button class="f-signin" type="submit" disabled><span>Sign in</span></button>
+          </form>
+
+          <div class="f-switch">
+            <span>New to deepquest?</span>
+            <a href="/signup">Create an account</a>
+          </div>
+
+          <div class="f-footer">
+            <span>By continuing, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></span>
+          </div>
         </div>
-        <div class="divider"><span></span>OR CONTINUE WITH EMAIL<span></span></div>
-        <label>Email address</label>
-        <div class="inp"><input placeholder="you@company.com" disabled /></div>
-        <div class="prow"><label>Password</label><a class="forgot">Forgot?</a></div>
-        <div class="inp"><input type="password" placeholder="Enter your password" disabled /><span class="eye">&#128065;</span></div>
-        <button class="signin" disabled>Sign in</button>
-        <p class="switch">New to deepquest? <a>Create an account</a></p>
-      </div>
-      <div class="ov">
-        <span class="pilllock">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-          Coming soon
-        </span>
+
+        <div class="f-overlay">
+          <span class="f-pill">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+            Coming soon
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -171,22 +244,20 @@
       }
 
       if (reduce) {
-        // static, fully-typed "ready" state
         lines.forEach(function (l) { l.tc.textContent = l.bl.text; revealTag(l); });
       } else {
         var li = 0, ci = 0;
         var step = function () {
           var l = lines[li];
-          if (!l) return; // sequence complete — cursor stays on the status line
+          if (!l) return;
           var full = l.bl.text;
           if (ci < full.length) {
             ci += 1;
             l.tc.textContent = full.slice(0, ci);
-            l.row.insertBefore(cursor, l.dots || null); // cursor rides the active line
+            l.row.insertBefore(cursor, l.dots || null);
             var justFinished = ci === full.length;
             if (justFinished) {
               if (l.bl.tag) revealTag(l);
-              // drop the cursor during the pause, except on the persistent status line
               if (!l.bl.status && cursor.parentNode) cursor.parentNode.removeChild(cursor);
             }
             setTimeout(step, justFinished ? LINE_PAUSE : TYPE + Math.random() * JITTER);

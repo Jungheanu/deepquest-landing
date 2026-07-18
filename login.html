@@ -92,12 +92,15 @@
     .f-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 17px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.28); background: rgba(148,163,184,0.09); color: var(--landing-text-primary); font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 
     @media (max-width: 1023px) {
+      /* Mobile: hide the atmosphere panel + its fixed logo, show the centered
+         wordmark, and give the form room so it never overflows sideways. */
+      body { overflow-x: hidden; overflow-y: auto; }
       .left { display: none; }
-      .right { border-left: none; width: 100%; }
+      .logo { display: none; }
+      .right { border-left: none; width: 100%; padding: 2.5rem 1.5rem; }
       .mobile-logo { display: block; text-align: center; margin-bottom: 32px; }
       .mobile-logo a { font-family: var(--font-playfair), serif; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.025em; color: var(--landing-text-primary); text-decoration: none; }
     }
-    @media (max-width: 860px) { body { overflow: auto; } }
     /* Reduced motion — static "ready" state, no canvas, no cursor, no orbit. */
     @media (prefers-reduced-motion: reduce) {
       .atmos-canvas { display: none; }

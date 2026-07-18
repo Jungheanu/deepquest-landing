@@ -581,21 +581,32 @@
 
         /* ===== MOBILE ===== */
         @media (max-width: 640px) {
-            .page { padding: 1.5rem; }
-            .ring-container { width: 170px; height: 170px; margin: 0 auto 2rem; }
-            .progress-ring { width: 170px; height: 170px; }
-            .terminal { font-size: 0.65rem; margin-bottom: 2rem; }
-            .hud { font-size: 0.55rem; }
-            .hud-tl, .hud-tr { top: 0.6rem; }
-            .hud-bl, .hud-br { bottom: 0.6rem; }
-            .hud-tl, .hud-bl { left: 0.6rem; }
-            .hud-tr, .hud-br { right: 0.6rem; }
-            /* Mirror the desktop decision: the clock keeps its true corner (set by
-               .hud-tl,.hud-tr above) and Login insets beside it, so all four HUD
-               corners stay aligned. Previously this inverted it — clock shoved to
-               right:5rem, Login in the corner. */
-            .login-btn { top: 0.6rem; right: 3.9rem; font-size: 0.72rem; padding: 0.38rem 0.85rem; }
-            .features { display: none; }
+            /* Scrollable on mobile: the hero sits at the top, cards flow below it. */
+            body { overflow-x: hidden; overflow-y: auto; }
+            .page { min-height: auto; padding: 5.5rem 1.5rem 2.5rem; }
+            .ring-container { width: 150px; height: 150px; margin: 0 auto 1.75rem; }
+            .progress-ring { width: 150px; height: 150px; }
+            .wordmark { font-size: 2.4rem; margin-bottom: 0; }
+
+            /* Keep only the SYS badge up top; the clock + bottom corners overflow a
+               phone, so hide them and let Login own the top-right corner cleanly. */
+            .hud-tr, .hud-bl, .hud-br { display: none; }
+            .hud-tl { top: 0.9rem; left: 1rem; font-size: 0.58rem; }
+            .login-btn { top: 0.75rem; right: 1rem; font-size: 0.85rem; padding: 0.55rem 1.2rem; }
+
+            /* Unpin the cards, stack them full-width, and flow them under the hero. */
+            .features {
+                position: static;
+                display: flex;
+                flex-direction: column;
+                width: auto;
+                max-width: 100%;
+                margin: 2.5rem auto 3rem;
+                padding: 0 1.25rem;
+                gap: 1rem;
+                transform: none;
+            }
+            .feature { padding: 1.55rem 1.6rem 1.65rem; }
             .orbit-dot-3, .orbit-dot-4 { display: none; }
         }
     </style>

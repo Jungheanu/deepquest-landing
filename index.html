@@ -1,24 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!--
+      deepquest.io HOMEPAGE — SOURCE OF TRUTH. Edit THIS file.
+
+      Served at "/" by the rewrite in next.config.ts (there is deliberately no
+      src/app/page.tsx). Sign-in is /login; the product is /app/*.
+
+      History: this page used to live in the standalone `deepquest-landing` repo,
+      which still serves deepquest.io until the domain is pointed at this app.
+      Until that cutover, edits here must be mirrored there; after it, archive
+      that repo so there is exactly one copy. See issue #132.
+    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Something is emerging.">
-    <title>deepquest.io</title>
+    <!-- This is the real homepage now (sitemap priority 1.0), not a teaser: it must
+         carry the same metadata the App Router used to render for "/". -->
+    <meta name="description" content="Medical research platform powered by AI agents. Explore autoimmune diseases, chronic conditions, and clinical evidence through structured workflows that decompose, research, analyze, and synthesize insights automatically.">
+    <title>deepquest.io — AI-Powered Medical Research Platform</title>
+    <!-- Served at "/" via rewrite, but also reachable at /landing.html — point
+         crawlers at the one canonical URL. -->
+    <link rel="canonical" href="https://deepquest.io/">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://deepquest.io">
-    <meta property="og:title" content="deepquest.io">
-    <meta property="og:description" content="Something is emerging.">
+    <meta property="og:site_name" content="deepquest.io">
+    <meta property="og:title" content="deepquest.io — AI-Powered Medical Research Platform">
+    <meta property="og:description" content="Medical research platform powered by AI agents. Explore autoimmune diseases, chronic conditions, and clinical evidence through structured workflows.">
     <meta property="og:image" content="https://deepquest.io/og-image.svg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="deepquest.io">
-    <meta name="twitter:description" content="Something is emerging.">
+    <meta name="twitter:title" content="deepquest.io — AI-Powered Medical Research Platform">
+    <meta name="twitter:description" content="Medical research platform powered by AI agents. Explore autoimmune diseases, chronic conditions, and clinical evidence through structured workflows.">
     <meta name="twitter:image" content="https://deepquest.io/og-image.svg">
 
     <!-- Favicon: abstract ring + node mark -->
@@ -200,8 +217,8 @@
 
         @keyframes ringFill {
             0% { stroke-dashoffset: 527.79; }
-            55% { stroke-dashoffset: 52.78; }
-            62% { stroke-dashoffset: 52.78; }
+            55% { stroke-dashoffset: 0; }
+            62% { stroke-dashoffset: 0; }
             100% { stroke-dashoffset: 527.79; }
         }
 
@@ -441,7 +458,7 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
-            .ring-progress { animation: none; stroke-dashoffset: 52.78; }
+            .ring-progress { animation: none; stroke-dashoffset: 0; }
             .ring-outer { animation: none; }
             .ring-glow { animation: none; opacity: 0.7; }
             .orbit-dot { animation: none; opacity: 0; }
@@ -449,6 +466,117 @@
             .terminal, .wordmark, .ring-container,
             .tagline, .hud { opacity: 1; transform: none; }
             .terminal-line { opacity: 1; }
+        }
+
+        /* ===== LOGIN BUTTON ===== */
+        .login-btn {
+            position: fixed;
+            top: 1.05rem;
+            /* Sits inside the ambient clock, so the 4 HUD corners stay aligned */
+            right: 6.6rem;
+            z-index: 12;
+            font-family: 'Inter', -apple-system, sans-serif;
+            font-size: 1.02rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            /* Same white as the "deepquest" wordmark (--text-primary) */
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.72rem 1.85rem;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.03);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.7s forwards;
+            transition: color 0.25s, border-color 0.25s, background 0.25s;
+        }
+        .login-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-light);
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .login-btn:focus-visible {
+            outline: 2px solid var(--accent-light);
+            outline-offset: 2px;
+        }
+
+        /* ===== FEATURE CARDS ===== */
+        .features {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 4.5rem;
+            margin: 0 auto;
+            width: fit-content;
+            max-width: calc(100vw - 3rem);
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(3, 352px);
+            justify-content: center;
+            gap: 1.35rem;
+            opacity: 0;
+            transform: translateY(16px);
+            animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+        }
+        .feature {
+            text-align: left;
+            padding: 1.85rem 1.95rem 1.95rem;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.04), rgba(148, 163, 184, 0.012));
+            transition: border-color 0.35s ease, background 0.35s ease, transform 0.35s ease;
+        }
+        .feature:hover {
+            border-color: rgba(148, 163, 184, 0.3);
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.07), rgba(148, 163, 184, 0.02));
+            transform: translateY(-3px);
+        }
+        .feature-icon {
+            width: 26px;
+            height: 26px;
+            color: var(--accent-light);
+            display: block;
+            margin: 0 0 1.1rem;
+            filter: drop-shadow(0 0 8px var(--accent-glow));
+        }
+        .feature-title {
+            font-size: 1.02rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.45rem;
+            letter-spacing: -0.01em;
+        }
+        .feature-desc {
+            font-size: 0.87rem;
+            font-weight: 300;
+            line-height: 1.62;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Tablet / narrow desktop: let the 3 cards flex to the viewport so the
+           fixed 300px columns never overflow. (Below 640px they're hidden.) */
+        @media (min-width: 641px) and (max-width: 1160px) {
+            .features {
+                left: 1.5rem;
+                right: 1.5rem;
+                width: auto;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.8rem;
+            }
+            .feature { padding: 1.2rem 1.25rem 1.3rem; }
+            .feature-desc { font-size: 0.74rem; }
+        }
+
+        /* Hide the bottom cards on short viewports so they never overlap the hero */
+        @media (max-height: 720px) {
+            .features { display: none; }
+        }
+        /* On taller viewports the cards show — lift the centered hero to clear them */
+        @media (min-height: 721px) {
+            .page { padding-bottom: 240px; }
         }
 
         /* ===== MOBILE ===== */
@@ -462,6 +590,12 @@
             .hud-bl, .hud-br { bottom: 0.6rem; }
             .hud-tl, .hud-bl { left: 0.6rem; }
             .hud-tr, .hud-br { right: 0.6rem; }
+            /* Mirror the desktop decision: the clock keeps its true corner (set by
+               .hud-tl,.hud-tr above) and Login insets beside it, so all four HUD
+               corners stay aligned. Previously this inverted it — clock shoved to
+               right:5rem, Login in the corner. */
+            .login-btn { top: 0.6rem; right: 3.9rem; font-size: 0.72rem; padding: 0.38rem 0.85rem; }
+            .features { display: none; }
             .orbit-dot-3, .orbit-dot-4 { display: none; }
         }
     </style>
@@ -475,6 +609,10 @@
     <div class="hud hud-tr" id="clock">00:00:00</div>
     <div class="hud hud-bl" id="indexed">INDEXED 0 sources</div>
     <div class="hud hud-br" id="hud-models">MODELS 0 | NODES 0</div>
+
+    <!-- Login CTA → the app's sign-in. Relative on purpose: this page and /login
+         are served by the same app, so it works in dev and prod unchanged. -->
+    <a class="login-btn" href="/login">Login</a>
 
     <!-- Main content -->
     <div class="page">
@@ -536,8 +674,32 @@
 
         <div class="text-group">
             <h1 class="wordmark">deepquest<span class="dot-io">.io</span></h1>
-            <div class="terminal" id="terminal"></div>
-            <p class="tagline" id="tagline">We're building something. Stay curious.</p>
+        </div>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="features">
+        <div class="feature">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/>
+                <line x1="8.2" y1="10.9" x2="15.7" y2="7.1"/><line x1="8.2" y1="13.1" x2="15.7" y2="16.9"/>
+            </svg>
+            <div class="feature-title">Agentic medical research</div>
+            <p class="feature-desc">A multi-agent pipeline searches PubMed, clinical trials, and the literature, then analyzes and synthesizes cited findings — not just links.</p>
+        </div>
+        <div class="feature">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16.5l9 5 9-5"/>
+            </svg>
+            <div class="feature-title">A knowledge base that compounds</div>
+            <p class="feature-desc">Every study feeds a living knowledge base that audits itself — flagging stale evidence, contradictions, and gaps, and suggesting what to explore next.</p>
+        </div>
+        <div class="feature">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h3.5l2-6 4 12 2.5-6H21"/>
+            </svg>
+            <div class="feature-title">Insights anyone can act on</div>
+            <p class="feature-desc">Dashboards and analytics surface the trends, patterns, and takeaways across your research — clear enough for clinicians, students, and patients to act on.</p>
         </div>
     </div>
 
@@ -662,57 +824,7 @@
         // Start count-up after boot sequence begins
         setTimeout(countUp, 2000);
 
-        // ===== 3. TERMINAL BOOT SEQUENCE =====
-        const terminal = document.getElementById('terminal');
-        const tagline = document.getElementById('tagline');
-
-        const bootLines = [
-            { text: '> initializing deepquest.io...', delay: 45, pause: 350 },
-            { text: '> scanning knowledge base.... ', delay: 38, ok: true, pause: 400 },
-            { text: '> loading agents............. ', delay: 40, ok: true, pause: 350 },
-            { text: '> memory systems online...... ', delay: 36, ok: true, pause: 380 },
-            { text: '> deep learning initialized.. ', delay: 42, ok: true, pause: 450 },
-            { text: '> STATUS: ', delay: 55, status: 'LEARNING', pause: 0 }
-        ];
-
-        let lineIdx = 0;
-
-        function typeLine() {
-            if (lineIdx >= bootLines.length) {
-                setTimeout(() => tagline.classList.add('show'), 400);
-                return;
-            }
-
-            const cfg = bootLines[lineIdx];
-            const el = document.createElement('div');
-            el.className = 'terminal-line visible' + (cfg.status ? ' terminal-status-row' : '');
-            terminal.appendChild(el);
-
-            let i = 0;
-            let buf = '';
-
-            function tick() {
-                if (i < cfg.text.length) {
-                    buf += cfg.text[i];
-                    el.innerHTML = buf + '<span class="t-cursor"></span>';
-                    i++;
-                    setTimeout(tick, cfg.delay + (Math.random() * 16 - 8));
-                } else {
-                    if (cfg.ok) {
-                        el.innerHTML = buf + '<span class="ok-tag">[OK]</span>';
-                    } else if (cfg.status) {
-                        el.innerHTML = buf + '<span class="status-line">' + cfg.status + '</span>';
-                    } else {
-                        el.innerHTML = buf;
-                    }
-                    lineIdx++;
-                    setTimeout(typeLine, cfg.pause);
-                }
-            }
-            tick();
-        }
-
-        setTimeout(typeLine, 1800);
+// (boot terminal + tagline removed — cleaner hero)
 
         // ===== 4. CLOCK =====
         function updateClock() {

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — deepquest</title>
+  <meta name="description" content="deepquest — agentic medical research. Launching soon." />
+  <!-- Coming-soon holding page: keep it out of the index until sign-in opens. -->
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0f1114; color: #d5d8db; font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; display: flex; overflow: hidden; }
+
+    .logo { position: fixed; top: 26px; left: 32px; z-index: 30; display: inline-flex; align-items: center; gap: 11px; text-decoration: none; }
+    .wordmark { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 500; color: #e7eaee; }
+    .io { color: #94a3b8; }
+
+    .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: flex-start; padding: 0 0 0 clamp(2.5rem, 7vw, 6.5rem); overflow: hidden; background: radial-gradient(circle at 32% 40%, rgba(148,163,184,.05), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1), #0f1114); }
+    .copyr { position: absolute; bottom: 24px; left: 34px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5b6470; }
+    .term { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.95; color: #636e72; width: 23rem; max-width: 100%; }
+    .tline { display: flex; align-items: center; }
+    .tc { white-space: pre; }
+    .dots { flex: 1; margin: 0 .7em; border-bottom: 1px dotted rgba(100,116,139,.32); transform: translateY(-.28em); }
+    .ok { color: #5f8f78; font-weight: 500; }
+    .status { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100,116,139,.15); }
+    .status .tc { color: #6b7688; }
+    .sval { color: #94a3b8; font-weight: 600; letter-spacing: .04em; margin-left: 9px; }
+    .caret { display: inline-block; width: 7px; height: 15px; background: #94a3b8; margin-left: 7px; transform: translateY(2px); opacity: .9; }
+
+    .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid rgba(100,116,139,.15); background: linear-gradient(180deg, rgba(18,20,25,1), rgba(15,17,20,1)); }
+    .rinner { width: 100%; max-width: 360px; position: relative; }
+    h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #eef1f4; text-align: center; }
+    .sub { font-size: 13px; color: #8b9298; text-align: center; margin: 8px 0 40px; }
+    .oauth { display: flex; gap: 10px; margin-bottom: 18px; }
+    .obtn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 1px solid rgba(100,116,139,.2); border-radius: 9px; background: rgba(255,255,255,.02); color: #d5d8db; font-size: 13px; font-weight: 500; font-family: inherit; }
+    .divider { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: .06em; color: #636e72; }
+    .divider span { flex: 1; height: 1px; background: rgba(100,116,139,.14); }
+    label { display: block; font-size: 12px; font-weight: 500; color: #8b9298; margin-bottom: 7px; }
+    .prow { display: flex; justify-content: space-between; align-items: center; }
+    .forgot { font-size: 11px; color: #94a3b8; text-decoration: none; font-weight: 500; }
+    .inp { position: relative; margin-bottom: 15px; }
+    .inp input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,.03); border: 1px solid rgba(100,116,139,.2); border-radius: 9px; color: #d5d8db; font-family: inherit; font-size: 13px; outline: none; }
+    .inp input::placeholder { color: #636e72; }
+    .eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); opacity: .4; font-size: 13px; }
+    .signin { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid rgba(148,163,184,.15); border-radius: 9px; background: linear-gradient(135deg, rgba(100,116,139,.9), rgba(74,85,104,.9)); color: #fff; font-size: 13px; font-weight: 600; font-family: inherit; }
+    .switch { margin-top: 20px; font-size: 12.5px; color: #636e72; text-align: center; }
+    .switch a { color: #94a3b8; text-decoration: none; font-weight: 500; }
+
+    /* Coming-soon gate: dim + blur the form, float a lock pill over it. */
+    .pilllock { display: inline-flex; align-items: center; gap: 8px; padding: 8px 17px; border-radius: 999px; border: 1px solid rgba(148,163,184,.28); background: rgba(148,163,184,.09); color: #eef1f4; font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+    .pilllock svg { width: 13px; height: 13px; color: #94a3b8; }
+    .vf .fw { filter: blur(1.5px) saturate(.55); opacity: .26; pointer-events: none; }
+    .vf .ov { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
+
+    @media (max-width: 860px) {
+      body { overflow: auto; }
+      .left { display: none; }
+      .right { border-left: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="logo" href="/">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <circle cx="32" cy="32" r="23" stroke="#94a3b8" stroke-width="2" />
+      <circle cx="48.3" cy="15.7" r="6" fill="#cbd5e1" opacity=".5" />
+      <circle cx="48.3" cy="15.7" r="2.7" fill="#f8fafc" />
+    </svg>
+    <span class="wordmark">deepquest<span class="io">.io</span></span>
+  </a>
+
+  <div class="left">
+    <div class="term">
+      <div class="tline"><span class="tc">&gt; connected to deepquest.io</span></div>
+      <div class="tline"><span class="tc">&gt; knowledge base synced</span><span class="dots"></span><span class="ok">[OK]</span></div>
+      <div class="tline"><span class="tc">&gt; agents online</span><span class="dots"></span><span class="ok">[OK]</span></div>
+      <div class="tline"><span class="tc">&gt; semantic search &amp; analysis</span><span class="dots"></span><span class="ok">[OK]</span></div>
+      <div class="tline"><span class="tc">&gt; evidence engine ready</span><span class="dots"></span><span class="ok">[OK]</span></div>
+      <div class="tline status"><span class="tc">&gt; STATUS:</span><span class="sval">ONLINE</span><span class="caret"></span></div>
+    </div>
+    <p class="copyr">&copy; 2026 deepquest.io</p>
+  </div>
+
+  <div class="right">
+    <div class="rinner vf">
+      <div class="fw">
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to continue to your research workspace</p>
+        <div class="oauth">
+          <button class="obtn" disabled>
+            <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg> Google
+          </button>
+          <button class="obtn" disabled>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#d5d8db"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016.01 0c2.29-1.55 3.3-1.23 3.3-1.23.64 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z" /></svg> GitHub
+          </button>
+        </div>
+        <div class="divider"><span></span>OR CONTINUE WITH EMAIL<span></span></div>
+        <label>Email address</label>
+        <div class="inp"><input placeholder="you@company.com" disabled /></div>
+        <div class="prow"><label>Password</label><a class="forgot">Forgot?</a></div>
+        <div class="inp"><input type="password" placeholder="Enter your password" disabled /><span class="eye">&#128065;</span></div>
+        <button class="signin" disabled>Sign in</button>
+        <p class="switch">New to deepquest? <a>Create an account</a></p>
+      </div>
+      <div class="ov">
+        <span class="pilllock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+          Coming soon
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

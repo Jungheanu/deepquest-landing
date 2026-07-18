@@ -10,35 +10,40 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    /* Colours mirror the app's --landing-* tokens so this page matches localhost/login exactly. */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #0f1114; color: #d5d8db; font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; display: flex; overflow: hidden; }
 
     .logo { position: fixed; top: 26px; left: 32px; z-index: 30; display: inline-flex; align-items: center; gap: 11px; text-decoration: none; }
-    .wordmark { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 500; color: #e7eaee; }
+    .wordmark { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 500; color: #d5d8db; }
     .io { color: #94a3b8; }
 
-    .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: flex-start; padding: 0 0 0 clamp(2.5rem, 7vw, 6.5rem); overflow: hidden; background: radial-gradient(circle at 32% 40%, rgba(148,163,184,.05), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1), #0f1114); }
-    /* particle-network canvas behind the boot log (same as the app's AuthAtmosphere) */
+    /* Left — living atmosphere. Boot log is CENTRED in the panel (like AuthAtmosphere). */
+    .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: center; padding: 4.5rem 2rem; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 32% 22%, rgba(148,163,184,.06), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1) 0%, #0f1114 100%); }
+    /* faint scanlines + vignette echo the app's atmosphere texture */
+    .left::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(100,116,139,.014) 2px, rgba(100,116,139,.014) 4px); }
+    .left::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,.5) 100%); }
     .atmos-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-    .copyr { position: absolute; bottom: 24px; left: 34px; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5b6470; }
+    .copyr { position: absolute; bottom: 24px; left: 34px; z-index: 4; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #636e72; }
 
-    .term { position: relative; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9; color: #636e72; width: 23rem; max-width: 100%; opacity: 0; animation: aa-fade .6s ease .5s forwards; }
+    .term { position: relative; z-index: 4; font-family: 'JetBrains Mono', monospace; font-size: clamp(.74rem, 1vw, .82rem); font-weight: 300; line-height: 1.9; color: #636e72; text-align: left; width: 23rem; max-width: 100%; opacity: 0; animation: aa-fade .6s ease .5s forwards; }
     .tline { display: flex; align-items: center; min-height: 1.9em; }
     .tc { white-space: pre; }
     .dots { flex: 1; margin: 0 .7em; border-bottom: 1px dotted rgba(100,116,139,.32); transform: translateY(-.28em); }
-    .ok { color: #5f8f78; font-weight: 500; white-space: nowrap; text-shadow: 0 0 8px rgba(95,143,120,.35); }
+    .ok { color: #4a6b5d; font-weight: 500; white-space: nowrap; text-shadow: 0 0 8px rgba(74,107,93,.5); }
     .ok.flash { animation: aa-okflash .5s ease-out; }
     .tline.status { margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(100,116,139,.15); }
     /* whole "> STATUS: ONLINE" line pulses in the accent colour, exactly like the app */
-    .sval-line { color: #94a3b8; font-weight: 600; letter-spacing: .02em; animation: aa-statuspulse 3s ease-in-out infinite; }
+    .sval-line { color: #94a3b8; font-weight: 500; letter-spacing: .02em; animation: aa-statuspulse 3s ease-in-out infinite; }
     .t-cursor { display: inline-block; width: .5em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: #94a3b8; animation: aa-blink 1s step-end infinite; }
 
     @keyframes aa-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-    @keyframes aa-okflash { 0% { text-shadow: 0 0 16px rgba(95,143,120,.6); } 100% { text-shadow: 0 0 8px rgba(95,143,120,.35); } }
-    @keyframes aa-statuspulse { 0%, 100% { opacity: .7; text-shadow: 0 0 8px rgba(148,163,184,.4); } 50% { opacity: 1; text-shadow: 0 0 16px rgba(148,163,184,.55); } }
+    @keyframes aa-okflash { 0% { text-shadow: 0 0 16px rgba(74,107,93,.5); } 100% { text-shadow: 0 0 8px rgba(74,107,93,.5); } }
+    @keyframes aa-statuspulse { 0%, 100% { opacity: .7; text-shadow: 0 0 8px rgba(148,163,184,.12); } 50% { opacity: 1; text-shadow: 0 0 16px rgba(148,163,184,.12); } }
     @keyframes aa-fade { to { opacity: 1; } }
 
-    .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid rgba(100,116,139,.15); background: linear-gradient(180deg, rgba(18,20,25,1), rgba(15,17,20,1)); }
+    /* Right — sign-in form panel, matching the app's (auth)/layout gradient + border. */
+    .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid rgba(100,116,139,.15); background: linear-gradient(180deg, rgba(18,20,25,1) 0%, #0f1114 100%); }
     .rinner { width: 100%; max-width: 360px; position: relative; }
     h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #eef1f4; text-align: center; }
     .sub { font-size: 13px; color: #8b9298; text-align: center; margin: 8px 0 40px; }
@@ -81,8 +86,8 @@
   <a class="logo" href="/">
     <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
       <circle cx="32" cy="32" r="23" stroke="#94a3b8" stroke-width="2" />
-      <circle cx="48.3" cy="15.7" r="6" fill="#cbd5e1" opacity=".5" />
-      <circle cx="48.3" cy="15.7" r="2.7" fill="#f8fafc" />
+      <circle cx="48.26" cy="15.74" r="6" fill="#cbd5e1" opacity=".5" />
+      <circle cx="48.26" cy="15.74" r="2.7" fill="#f8fafc" />
     </svg>
     <span class="wordmark">deepquest<span class="io">.io</span></span>
   </a>

@@ -18,16 +18,25 @@
     .io { color: #94a3b8; }
 
     .left { position: relative; width: 56%; display: flex; align-items: center; justify-content: flex-start; padding: 0 0 0 clamp(2.5rem, 7vw, 6.5rem); overflow: hidden; background: radial-gradient(circle at 32% 40%, rgba(148,163,184,.05), transparent 60%), linear-gradient(160deg, rgba(28,32,38,1), #0f1114); }
-    .copyr { position: absolute; bottom: 24px; left: 34px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5b6470; }
-    .term { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.95; color: #636e72; width: 23rem; max-width: 100%; }
-    .tline { display: flex; align-items: center; }
+    /* particle-network canvas behind the boot log (same as the app's AuthAtmosphere) */
+    .atmos-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .copyr { position: absolute; bottom: 24px; left: 34px; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #5b6470; }
+
+    .term { position: relative; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9; color: #636e72; width: 23rem; max-width: 100%; opacity: 0; animation: aa-fade .6s ease .5s forwards; }
+    .tline { display: flex; align-items: center; min-height: 1.9em; }
     .tc { white-space: pre; }
     .dots { flex: 1; margin: 0 .7em; border-bottom: 1px dotted rgba(100,116,139,.32); transform: translateY(-.28em); }
-    .ok { color: #5f8f78; font-weight: 500; }
-    .status { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100,116,139,.15); }
-    .status .tc { color: #6b7688; }
-    .sval { color: #94a3b8; font-weight: 600; letter-spacing: .04em; margin-left: 9px; }
-    .caret { display: inline-block; width: 7px; height: 15px; background: #94a3b8; margin-left: 7px; transform: translateY(2px); opacity: .9; }
+    .ok { color: #5f8f78; font-weight: 500; white-space: nowrap; text-shadow: 0 0 8px rgba(95,143,120,.35); }
+    .ok.flash { animation: aa-okflash .5s ease-out; }
+    .tline.status { margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(100,116,139,.15); }
+    /* whole "> STATUS: ONLINE" line pulses in the accent colour, exactly like the app */
+    .sval-line { color: #94a3b8; font-weight: 600; letter-spacing: .02em; animation: aa-statuspulse 3s ease-in-out infinite; }
+    .t-cursor { display: inline-block; width: .5em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: #94a3b8; animation: aa-blink 1s step-end infinite; }
+
+    @keyframes aa-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    @keyframes aa-okflash { 0% { text-shadow: 0 0 16px rgba(95,143,120,.6); } 100% { text-shadow: 0 0 8px rgba(95,143,120,.35); } }
+    @keyframes aa-statuspulse { 0%, 100% { opacity: .7; text-shadow: 0 0 8px rgba(148,163,184,.4); } 50% { opacity: 1; text-shadow: 0 0 16px rgba(148,163,184,.55); } }
+    @keyframes aa-fade { to { opacity: 1; } }
 
     .right { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; border-left: 1px solid rgba(100,116,139,.15); background: linear-gradient(180deg, rgba(18,20,25,1), rgba(15,17,20,1)); }
     .rinner { width: 100%; max-width: 360px; position: relative; }
@@ -59,6 +68,13 @@
       .left { display: none; }
       .right { border-left: none; width: 100%; }
     }
+    /* Reduced motion — static "ready" state, no canvas, no cursor. */
+    @media (prefers-reduced-motion: reduce) {
+      .atmos-canvas { display: none; }
+      .term { opacity: 1; animation: none; }
+      .sval-line, .ok.flash { animation: none; }
+      .t-cursor { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -72,14 +88,8 @@
   </a>
 
   <div class="left">
-    <div class="term">
-      <div class="tline"><span class="tc">&gt; connected to deepquest.io</span></div>
-      <div class="tline"><span class="tc">&gt; knowledge base synced</span><span class="dots"></span><span class="ok">[OK]</span></div>
-      <div class="tline"><span class="tc">&gt; agents online</span><span class="dots"></span><span class="ok">[OK]</span></div>
-      <div class="tline"><span class="tc">&gt; semantic search &amp; analysis</span><span class="dots"></span><span class="ok">[OK]</span></div>
-      <div class="tline"><span class="tc">&gt; evidence engine ready</span><span class="dots"></span><span class="ok">[OK]</span></div>
-      <div class="tline status"><span class="tc">&gt; STATUS:</span><span class="sval">ONLINE</span><span class="caret"></span></div>
-    </div>
+    <canvas class="atmos-canvas" id="atmosCanvas" aria-hidden="true"></canvas>
+    <div class="term" id="term" aria-hidden="true"></div>
     <p class="copyr">&copy; 2026 deepquest.io</p>
   </div>
 
@@ -112,5 +122,126 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Boot log + particle canvas ported 1:1 from the app's AuthAtmosphere so the
+    // static /login left panel matches localhost/login (typed, not static).
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // ---- Typewriter boot log -------------------------------------------------
+      var BOOT = [
+        { text: "> connected to deepquest.io" },
+        { text: "> knowledge base synced", tag: "OK" },
+        { text: "> agents online", tag: "OK" },
+        { text: "> semantic search & analysis", tag: "OK" },
+        { text: "> evidence engine ready", tag: "OK" },
+        { text: "> STATUS: ONLINE", status: true }
+      ];
+      var START_DELAY = 650, TYPE = 26, JITTER = 26, LINE_PAUSE = 380;
+
+      var term = document.getElementById("term");
+      var cursor = document.createElement("span");
+      cursor.className = "t-cursor";
+
+      var lines = BOOT.map(function (bl) {
+        var row = document.createElement("div");
+        row.className = "tline" + (bl.status ? " status" : "");
+        var tc = document.createElement("span");
+        tc.className = bl.status ? "tc sval-line" : "tc";
+        row.appendChild(tc);
+        var dots = null, ok = null;
+        if (bl.tag) {
+          dots = document.createElement("span"); dots.className = "dots"; dots.style.visibility = "hidden";
+          ok = document.createElement("span"); ok.className = "ok"; ok.textContent = "[" + bl.tag + "]"; ok.style.visibility = "hidden";
+          row.appendChild(dots); row.appendChild(ok);
+        }
+        term.appendChild(row);
+        return { bl: bl, row: row, tc: tc, dots: dots, ok: ok };
+      });
+
+      function revealTag(l) {
+        if (l.dots) l.dots.style.visibility = "visible";
+        if (l.ok) { l.ok.style.visibility = "visible"; l.ok.classList.add("flash"); }
+      }
+
+      if (reduce) {
+        // static, fully-typed "ready" state
+        lines.forEach(function (l) { l.tc.textContent = l.bl.text; revealTag(l); });
+      } else {
+        var li = 0, ci = 0;
+        var step = function () {
+          var l = lines[li];
+          if (!l) return; // sequence complete — cursor stays on the status line
+          var full = l.bl.text;
+          if (ci < full.length) {
+            ci += 1;
+            l.tc.textContent = full.slice(0, ci);
+            l.row.insertBefore(cursor, l.dots || null); // cursor rides the active line
+            var justFinished = ci === full.length;
+            if (justFinished) {
+              if (l.bl.tag) revealTag(l);
+              // drop the cursor during the pause, except on the persistent status line
+              if (!l.bl.status && cursor.parentNode) cursor.parentNode.removeChild(cursor);
+            }
+            setTimeout(step, justFinished ? LINE_PAUSE : TYPE + Math.random() * JITTER);
+          } else {
+            li += 1; ci = 0;
+            if (li < lines.length) setTimeout(step, 40);
+          }
+        };
+        setTimeout(step, START_DELAY);
+      }
+
+      // ---- Particle-network canvas --------------------------------------------
+      var canvas = document.getElementById("atmosCanvas");
+      var container = canvas && canvas.parentElement;
+      if (!canvas || !container || reduce) { if (canvas) canvas.style.display = "none"; return; }
+      var ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      var A = { r: 148, g: 163, b: 184 };
+      function rgba(a) { return "rgba(" + A.r + "," + A.g + "," + A.b + "," + a + ")"; }
+      var DIST = 120, width = 0, height = 0, frame = 0, particles = [];
+      function seed() {
+        var count = width < 480 ? 22 : 40;
+        particles = [];
+        for (var i = 0; i < count; i++) particles.push({
+          x: Math.random() * width, y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.5 + 0.5
+        });
+      }
+      function resize() {
+        var rect = container.getBoundingClientRect();
+        width = Math.max(1, rect.width); height = Math.max(1, rect.height);
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+        canvas.style.width = width + "px"; canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (!particles.length) seed();
+      }
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+        for (var i = 0; i < particles.length; i++) {
+          var a = particles[i];
+          for (var j = i + 1; j < particles.length; j++) {
+            var b = particles[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.sqrt(dx * dx + dy * dy);
+            if (d < DIST) { ctx.strokeStyle = rgba((1 - d / DIST) * 0.08); ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          }
+        }
+        ctx.fillStyle = rgba(0.15);
+        for (var k = 0; k < particles.length; k++) {
+          var p = particles[k]; p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+        }
+        frame = requestAnimationFrame(render);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+      frame = requestAnimationFrame(render);
+    })();
+  </script>
 </body>
 </html>
